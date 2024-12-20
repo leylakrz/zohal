@@ -1,0 +1,78 @@
+version: "3.9"
+
+services:
+  zohal_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zohal_app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - zohal_rabbitmq
+      - zohal_mongodb
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      - MONGODB_HOST=mongodb://zohal_mongodb:27017
+      - MONGODB_DATABASE=zibal_db
+      - CELERY_BROKER_URL=amqp://admin:admin@zohal_rabbitmq:5672/
+    networks:
+      - zohal
+
+  zohal_celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zohal_celery_worker
+    working_dir: /app
+    command: celery -A zohal worker --loglevel=info
+    depends_on:
+      - zohal_rabbitmq
+      - zohal_mongodb
+    environment:
+      - MONGODB_HOST=mongodb://zohal_mongodb:27017
+      - MONGODB_DATABASE=zibal_db
+      - CELERY_BROKER_URL=amqp://admin:admin@zohal_rabbitmq:5672/
+    networks:
+      - zohal
+
+  zohal_celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zohal_celery_beat
+    working_dir: /app
+    command: celery -A zohal beat --loglevel=info
+    depends_on:
+      - zohal_rabbitmq
+      - zohal_mongodb
+    environment:
+      - MONGODB_HOST=mongodb://zohal_mongodb:27017
+      - MONGODB_DATABASE=zibal_db
+      - CELERY_BROKER_URL=amqp://admin:admin@zohal_rabbitmq:5672/
+    networks:
+      - zohal
+
+  zohal_rabbitmq:
+    image: rabbitmq:3-management
+    container_name: zohal_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - zohal
+
+  zohal_mongodb:
+    image: mongo:latest
+    container_name: zohal_mongodb
+    ports:
+      - "27017:27017"
+    networks:
+      - zohal
+
+networks:
+  zohal:
+    driver: bridge
