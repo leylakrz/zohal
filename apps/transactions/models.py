@@ -167,3 +167,23 @@ class TransactionSummaryModel(Document):
             },
         ]
         return list(cls.objects.aggregate(pipeline))
+
+    @classmethod
+    def get_last_days(cls):
+        pipeline = [
+            {
+                "$match": {
+                    "merchantId": {"$ne": None}
+                }
+            },
+            {
+                "$project": {
+                    "merchantId": 1,
+                    "lastDay": {
+                        "$arrayElemAt": ["$daily_charts", -1]
+                    }
+                }
+            }
+        ]
+
+        return list(cls.objects.aggregate(pipeline))
