@@ -4,7 +4,7 @@ from datetime import timedelta
 import jdatetime
 
 from apps.transactions.constants import TRANSACTION_DAILY_CHART_KEY_FORMAT
-from apps.transactions.models import TransactionModel
+from apps.transactions.models import TransactionModel, TransactionSummaryModel
 from apps.utils.general import gregorian_datetime_to_jalali_date_str, number_to_jalali_month_name
 
 
@@ -118,5 +118,6 @@ class TransactionService:
 
         return monthly_chart_processed
 
-    def get_chart(self, chart_type: str, mode: str, merchant_id: str | None):
-        pass
+    @staticmethod
+    def get_chart(chart_type: str, mode: str, merchant_id: str | None):
+        return TransactionSummaryModel.get_chart(chart_type, mode, merchant_id)

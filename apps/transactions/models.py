@@ -144,3 +144,26 @@ class TransactionSummaryModel(Document):
     daily_charts = ListField(EmbeddedDocumentField(TransactionDailyChart))
     weekly_charts = ListField(EmbeddedDocumentField(TransactionWeeklyChart))
     monthly_charts = ListField(EmbeddedDocumentField(TransactionMonthlyChart))
+
+    @classmethod
+    def get_chart(cls, chart_type: str, mode: str, merchant_id: str | None) -> list[dict]:
+        match chart_type:
+            case constants.COUNT:
+                project_value = "totalCount"
+            case constants.AMOUNT:
+                project_value = "totalAmount"
+            case _:
+                raise ValueError("Invalid chart_type")
+
+        field_name = f"{mode}_charts"
+
+        pipeline = [
+            {"$match": {"merchantId": ObjectId(merchant_id)}},
+            {
+                "$project": {
+                    "key": f"$${field_name}.key",
+                    "value": f"$${field_name}.{project_value}",
+                }
+            },
+        ]
+        return list(cls.objects.aggregate(pipeline))
