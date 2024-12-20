@@ -124,3 +124,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MONGODB_HOST = os.getenv("MONGODB_HOST", "mongodb://localhost:27017")
 MONGODB_DATABASE = os.getenv("MONGODB_DATABASE", "zibal_db")
 mongoengine.connect(MONGODB_DATABASE, host=MONGODB_HOST, connect=False)
+
+# Celery
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://admin:admin@localhost:5672/")
+CELERY_TIMEZONE = "Asia/Tehran"
+CELERY_TASK_DEFAULT_QUEUE = QUEUE = "zohal"
