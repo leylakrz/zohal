@@ -1,0 +1,14 @@
+COUNT = "count"
+AMOUNT = "amount"
+TRANSACTION_CHART_TYPE_CHOICES = [
+    (COUNT, COUNT),
+    (AMOUNT, AMOUNT),
+]
+DAILY = "daily"
+WEEKLY = "weekly"
+MONTHLY = "monthly"
+TRANSACTION_CHART_MODE_CHOICES = [
+    (DAILY, DAILY),
+    (WEEKLY, WEEKLY),
+    (MONTHLY, MONTHLY),
+]
