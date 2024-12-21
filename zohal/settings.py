@@ -129,4 +129,6 @@ mongoengine.connect(MONGODB_DATABASE, host=MONGODB_HOST, connect=False)
 # Celery
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://admin:admin@localhost:5672/")
 CELERY_TIMEZONE = "Asia/Tehran"
+CELERY_DATABASE = os.getenv("CELERY_RESULT_DATABASE", "celery_db")
+CELERY_RESULT_BACKEND = f"{MONGODB_HOST}/{CELERY_DATABASE}"
 CELERY_TASK_DEFAULT_QUEUE = QUEUE = "zohal"
